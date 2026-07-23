@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sarvesh Sapre — Electronics Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A1410;
+    --bg-panel: #0F1D17;
+    --pcb-line: #1C3327;
+    --copper: #C8823C;
+    --copper-bright: #E39B54;
+    --phosphor: #5CFFB1;
+    --phosphor-dim: #2E8C63;
+    --text: #E9EEE9;
+    --text-dim: #8FA69A;
+    --border: #203A2C;
+    --display: 'Space Grotesk', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+    --body: 'IBM Plex Sans', sans-serif;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    overflow-x:hidden;
+    background-image:
+      linear-gradient(var(--pcb-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--pcb-line) 1px, transparent 1px);
+    background-size: 42px 42px;
+    background-position: -1px -1px;
+  }
+
+  ::selection{ background:var(--phosphor-dim); color:#001208; }
+
+  a{color:inherit; text-decoration:none;}
+
+  .noise-overlay{
+    position:fixed; inset:0; pointer-events:none; z-index:1;
+    background:radial-gradient(ellipse at 50% -10%, rgba(92,255,177,0.06), transparent 60%);
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:20px 48px;
+    background:rgba(10,20,16,0.75);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .logo{
+    font-family:var(--mono); font-size:0.85rem; letter-spacing:0.08em;
+    color:var(--phosphor); display:flex; align-items:center; gap:8px;
+  }
+  .logo::before{
+    content:''; width:8px; height:8px; border-radius:50%;
+    background:var(--phosphor); box-shadow:0 0 8px var(--phosphor);
+    animation:blink 2.4s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  .nav-links{display:flex; gap:32px; font-family:var(--mono); font-size:0.78rem; letter-spacing:0.05em;}
+  .nav-links a{color:var(--text-dim); position:relative; transition:color .25s;}
+  .nav-links a:hover{color:var(--phosphor);}
+  .nav-links a::before{content:'/ ';color:var(--copper);}
+
+  @media (max-width: 720px){ .nav-links{display:none;} nav{padding:16px 20px;} }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:120px 48px 60px;
+    position:relative;
+    max-width:1180px; margin:0 auto;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:0.78rem; color:var(--copper-bright);
+    letter-spacing:0.12em; text-transform:uppercase; margin-bottom:18px;
+    display:flex; align-items:center; gap:10px;
+    opacity:0; animation:fadeUp .8s ease forwards .1s;
+  }
+  .eyebrow .rule{width:36px; height:1px; background:var(--copper);}
+
+  .hero h1{
+    font-family:var(--display); font-weight:700;
+    font-size:clamp(2.6rem, 7vw, 5.4rem);
+    line-height:1.02; letter-spacing:-0.02em;
+    opacity:0; animation:fadeUp .9s ease forwards .25s;
+  }
+  .hero h1 .accent{color:var(--phosphor);}
+
+  .hero-sub{
+    margin-top:22px; max-width:560px;
+    font-size:1.05rem; line-height:1.7; color:var(--text-dim);
+    opacity:0; animation:fadeUp .9s ease forwards .4s;
+  }
+  .hero-sub b{color:var(--text); font-weight:500;}
+
+  .hero-cta{
+    margin-top:36px; display:flex; gap:16px; flex-wrap:wrap;
+    opacity:0; animation:fadeUp .9s ease forwards .55s;
+  }
+  .btn{
+    font-family:var(--mono); font-size:0.82rem; padding:13px 26px;
+    border-radius:3px; letter-spacing:0.03em; cursor:pointer;
+    transition:all .25s; display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-solid{ background:var(--phosphor); color:#001208; font-weight:600; }
+  .btn-solid:hover{ background:var(--copper-bright); transform:translateY(-2px); }
+  .btn-outline{ border:1px solid var(--border); color:var(--text); }
+  .btn-outline:hover{ border-color:var(--phosphor-dim); color:var(--phosphor); }
+
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(18px);} to{opacity:1; transform:translateY(0);} }
+
+  /* ---------- SCOPE (signature waveform) ---------- */
+  .scope{
+    margin-top:56px; border:1px solid var(--border); border-radius:6px;
+    background:var(--bg-panel); overflow:hidden;
+    opacity:0; animation:fadeUp 1s ease forwards .7s;
+  }
+  .scope-head{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 18px; border-bottom:1px solid var(--border);
+    font-family:var(--mono); font-size:0.72rem; color:var(--text-dim);
+  }
+  .scope-head span.tag{ color:var(--phosphor); }
+  #ppg{ width:100%; height:150px; display:block; }
+  .scope-foot{
+    padding:10px 18px; border-top:1px solid var(--border);
+    font-family:var(--mono); font-size:0.7rem; color:var(--text-dim);
+    display:flex; justify-content:space-between;
+  }
+
+  /* ---------- SECTION SHARED ---------- */
+  section{ max-width:1180px; margin:0 auto; padding:110px 48px; position:relative; }
+  .sec-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:52px; }
+  .sec-num{ font-family:var(--mono); color:var(--copper); font-size:0.85rem; }
+  .sec-title{ font-family:var(--display); font-size:clamp(1.7rem,3.5vw,2.5rem); font-weight:600; }
+  .sec-line{ flex:1; height:1px; background:var(--border); }
+
+  .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; }
+  @media (max-width:820px){ .about-grid{grid-template-columns:1fr;} }
+  .about-grid p{ color:var(--text-dim); line-height:1.85; font-size:1rem; margin-bottom:16px; }
+  .about-grid b{ color:var(--text); font-weight:500; }
+  .spec-sheet{
+    border:1px solid var(--border); border-radius:6px; background:var(--bg-panel);
+    font-family:var(--mono); font-size:0.82rem; overflow:hidden;
+  }
+  .spec-row{ display:flex; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--border); }
+  .spec-row:last-child{ border-bottom:none; }
+  .spec-row span:first-child{ color:var(--text-dim); }
+  .spec-row span:last-child{ color:var(--phosphor); text-align:right; }
+
+  /* ---------- SKILLS as breadboard ---------- */
+  .board{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1px;
+    background:var(--border); border:1px solid var(--border); border-radius:6px; overflow:hidden;
+  }
+  .chip{
+    background:var(--bg-panel); padding:30px 26px; position:relative;
+    transition:background .3s;
+  }
+  .chip:hover{ background:#122820; }
+  .chip:hover .chip-glow{ opacity:1; }
+  .chip-glow{
+    position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, var(--phosphor), transparent);
+    opacity:0; transition:opacity .3s;
+  }
+  .chip-label{ font-family:var(--mono); font-size:0.68rem; color:var(--copper); letter-spacing:0.08em; }
+  .chip-name{ font-family:var(--display); font-size:1.3rem; font-weight:600; margin-top:8px; }
+  .chip-desc{ font-size:0.86rem; color:var(--text-dim); margin-top:10px; line-height:1.6; }
+  .chip-bar{ margin-top:18px; height:4px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .chip-bar-fill{ height:100%; background:var(--phosphor); width:0; transition:width 1.2s ease; border-radius:2px; }
+  .chip.in .chip-bar-fill{ width:var(--lvl); }
+
+  /* ---------- PROJECTS ---------- */
+  .proj-list{ display:flex; flex-direction:column; border-top:1px solid var(--border); }
+  .proj{
+    display:grid; grid-template-columns:80px 1fr auto; gap:28px; align-items:center;
+    padding:34px 0; border-bottom:1px solid var(--border);
+    transition:padding-left .3s;
+  }
+  .proj:hover{ padding-left:14px; background:linear-gradient(90deg, rgba(92,255,177,0.04), transparent); }
+  .proj-id{ font-family:var(--mono); color:var(--copper); font-size:0.85rem; }
+  .proj-body h3{ font-family:var(--display); font-size:1.35rem; font-weight:600; margin-bottom:8px; }
+  .proj-body p{ color:var(--text-dim); font-size:0.92rem; line-height:1.7; max-width:560px; }
+  .proj-tags{ display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+  .proj-tags span{
+    font-family:var(--mono); font-size:0.68rem; padding:4px 10px;
+    border:1px solid var(--border); border-radius:20px; color:var(--text-dim);
+  }
+  .proj-mark{ font-family:var(--mono); font-size:0.72rem; color:var(--phosphor-dim); white-space:nowrap; }
+  @media (max-width:700px){ .proj{grid-template-columns:1fr;} .proj-mark{display:none;} }
+
+  /* ---------- EDUCATION ---------- */
+  .timeline{ position:relative; padding-left:32px; border-left:1px solid var(--border); }
+  .tl-item{ position:relative; padding-bottom:44px; }
+  .tl-item:last-child{ padding-bottom:0; }
+  .tl-item::before{
+    content:''; position:absolute; left:-37px; top:4px; width:10px; height:10px;
+    border-radius:50%; background:var(--bg); border:2px solid var(--phosphor);
+  }
+  .tl-year{ font-family:var(--mono); font-size:0.75rem; color:var(--copper); }
+  .tl-item h3{ font-family:var(--display); font-size:1.15rem; margin:6px 0; font-weight:600; }
+  .tl-item p{ color:var(--text-dim); font-size:0.9rem; }
+
+  /* ---------- CONTACT ---------- */
+  .contact-wrap{ text-align:center; }
+  .contact-wrap h2{
+    font-family:var(--display); font-size:clamp(2rem,5vw,3.2rem); font-weight:700; margin-bottom:20px;
+  }
+  .contact-wrap p{ color:var(--text-dim); max-width:480px; margin:0 auto 36px; line-height:1.7; }
+  .contact-links{ display:flex; justify-content:center; gap:18px; flex-wrap:wrap; }
+
+  footer{
+    text-align:center; padding:36px; font-family:var(--mono); font-size:0.72rem;
+    color:var(--text-dim); border-top:1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div class="noise-overlay"></div>
+
+<nav>
+  <div class="logo">SARVESH.SAPRE</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#education">Education</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="eyebrow"><span class="rule"></span>ELECTRONICS ENGINEERING · SEM III</div>
+  <h1>Sarvesh Sapre<br>builds signals into <span class="accent">systems.</span></h1>
+  <p class="hero-sub">
+    2nd-year <b>Electronics Engineering</b> student at G.H. Raisoni College of Engineering, Nagpur — originally from
+    <b>Yavatmal, Maharashtra</b>. I work across embedded hardware and code: Arduino builds on the bench,
+    Python and C for logic, and biomedical signal simulation in MATLAB.
+  </p>
+  <div class="hero-cta">
+    <a href="#projects" class="btn btn-solid">View Projects</a>
+    <a href="#contact" class="btn btn-outline">Get in Touch</a>
+  </div>
+
+  <div class="scope">
+    <div class="scope-head">
+      <span><span class="tag">●</span> PPG_SIGNAL — pulse oximeter waveform (MATLAB project, live-rendered)</span>
+      <span id="bpm">72 BPM</span>
+    </div>
+    <canvas id="ppg"></canvas>
+    <div class="scope-foot">
+      <span>CH1 · 0–5V</span>
+      <span>SWEEP 25mm/s</span>
+      <span id="clock">00:00:00</span>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="sec-head reveal"><span class="sec-num">01</span><span class="sec-title">About</span><span class="sec-line"></span></div>
+  <div class="about-grid reveal">
+    <div>
+      <p>I'm an Electronics Engineering student who likes taking a concept from theory to a working circuit —
+        whether that means <b>simulating a physiological signal in MATLAB</b>, wiring up a sensor on an
+        <b>Arduino</b>, or writing the logic that ties it together in <b>Python and C</b>.</p>
+      <p>My biomedical engineering coursework led me to build a <b>pulse oximeter simulation</b>, modeling how
+        light absorption in blood translates into the PPG waveform you see animating above — the same principle
+        behind the sensor on a hospital fingertip clip.</p>
+      <p>Outside coursework, I keep building small hardware projects to stay hands-on with the fundamentals:
+        sensors, microcontrollers, and the code that drives them.</p>
+    </div>
+    <div class="spec-sheet">
+      <div class="spec-row"><span>Name</span><span>Sarvesh Sapre</span></div>
+      <div class="spec-row"><span>Field</span><span>Electronics Engineering</span></div>
+      <div class="spec-row"><span>Year</span><span>2nd Year / Sem III</span></div>
+      <div class="spec-row"><span>College</span><span>G.H. Raisoni CoE, Nagpur</span></div>
+      <div class="spec-row"><span>Hometown</span><span>Yavatmal, Maharashtra</span></div>
+      <div class="spec-row"><span>Focus</span><span>Embedded + Biomedical Signals</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="sec-head reveal"><span class="sec-num">02</span><span class="sec-title">Skills</span><span class="sec-line"></span></div>
+  <div class="board">
+    <div class="chip reveal" style="--lvl:82%">
+      <div class="chip-glow"></div>
+      <div class="chip-label">LANGUAGE</div>
+      <div class="chip-name">Python</div>
+      <div class="chip-desc">Scripting, logic, and data handling for coursework and side projects.</div>
+      <div class="chip-bar"><div class="chip-bar-fill"></div></div>
+    </div>
+    <div class="chip reveal" style="--lvl:75%">
+      <div class="chip-glow"></div>
+      <div class="chip-label">LANGUAGE</div>
+      <div class="chip-name">C</div>
+      <div class="chip-desc">Core language for embedded logic and microcontroller programming.</div>
+      <div class="chip-bar"><div class="chip-bar-fill"></div></div>
+    </div>
+    <div class="chip reveal" style="--lvl:70%">
+      <div class="chip-glow"></div>
+      <div class="chip-label">WEB</div>
+      <div class="chip-name">HTML</div>
+      <div class="chip-desc">Structuring and building web content and interfaces.</div>
+      <div class="chip-bar"><div class="chip-bar-fill"></div></div>
+    </div>
+    <div class="chip reveal" style="--lvl:78%">
+      <div class="chip-glow"></div>
+      <div class="chip-label">SIMULATION</div>
+      <div class="chip-name">MATLAB</div>
+      <div class="chip-desc">Biomedical signal modeling — used to simulate a pulse oximeter waveform.</div>
+      <div class="chip-bar"><div class="chip-bar-fill"></div></div>
+    </div>
+    <div class="chip reveal" style="--lvl:65%">
+      <div class="chip-glow"></div>
+      <div class="chip-label">HARDWARE</div>
+      <div class="chip-name">Arduino</div>
+      <div class="chip-desc">Sensor interfacing and small embedded builds on the microcontroller platform.</div>
+      <div class="chip-bar"><div class="chip-bar-fill"></div></div>
+    </div>
+    <div class="chip reveal" style="--lvl:68%">
+      <div class="chip-glow"></div>
+      <div class="chip-label">DOMAIN</div>
+      <div class="chip-name">Biomedical E.</div>
+      <div class="chip-desc">Applying electronics fundamentals to physiological signal simulation.</div>
+      <div class="chip-bar"><div class="chip-bar-fill"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="sec-head reveal"><span class="sec-num">03</span><span class="sec-title">Projects</span><span class="sec-line"></span></div>
+  <div class="proj-list">
+    <div class="proj reveal">
+      <div class="proj-id">P.01</div>
+      <div class="proj-body">
+        <h3>Pulse Oximeter — MATLAB Simulation</h3>
+        <p>A biomedical engineering project simulating the working principle of a pulse oximeter: modeling
+          light absorption at two wavelengths to derive a PPG waveform and estimate blood-oxygen behavior.</p>
+        <div class="proj-tags"><span>MATLAB</span><span>Biomedical Engineering</span><span>Signal Modeling</span></div>
+      </div>
+      <div class="proj-mark">COURSE PROJECT</div>
+    </div>
+    <div class="proj reveal">
+      <div class="proj-id">P.02</div>
+      <div class="proj-body">
+        <h3>Arduino Sensor Builds</h3>
+        <p>A set of small hardware projects on Arduino, wiring up sensors and microcontroller logic to
+          get hands-on experience with embedded fundamentals.</p>
+        <div class="proj-tags"><span>Arduino</span><span>C</span><span>Embedded</span></div>
+      </div>
+      <div class="proj-mark">HARDWARE</div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="sec-head reveal"><span class="sec-num">04</span><span class="sec-title">Education</span><span class="sec-line"></span></div>
+  <div class="timeline reveal">
+    <div class="tl-item">
+      <div class="tl-year">PRESENT</div>
+      <h3>B.Tech, Electronics Engineering</h3>
+      <p>G.H. Raisoni College of Engineering, Nagpur — 2nd Year, 3rd Semester.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">ORIGIN</div>
+      <h3>Yavatmal, Maharashtra</h3>
+      <p>Hometown before moving to Nagpur for engineering studies.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-wrap reveal">
+    <h2>Let's build<br>something together.</h2>
+    <p>Open to collaborations on embedded systems, biomedical signal projects, or anything that mixes
+      hardware and code.</p>
+    <div class="contact-links">
+      <a href="mailto:your.email@example.com" class="btn btn-solid">Email Me</a>
+      <a href="#" class="btn btn-outline">GitHub</a>
+      <a href="#" class="btn btn-outline">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 SARVESH SAPRE · ELECTRONICS ENGINEERING · G.H. RAISONI COE, NAGPUR</footer>
+
+<script>
+  // ---- Scroll reveal ----
+  const revealEls = document.querySelectorAll('.reveal, .chip');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  },{threshold:0.15});
+  revealEls.forEach(el=>io.observe(el));
+
+  // ---- Live clock ----
+  function tick(){
+    const d = new Date();
+    document.getElementById('clock').textContent = d.toTimeString().slice(0,8);
+  }
+  tick(); setInterval(tick,1000);
+
+  // ---- PPG waveform canvas (pulse oximeter style trace) ----
+  const canvas = document.getElementById('ppg');
+  const ctx = canvas.getContext('2d');
+  let W,H;
+  function resize(){
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W * devicePixelRatio; canvas.height = H * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Generate one PPG beat cycle (systolic peak + dicrotic notch)
+  function ppgSample(t){
+    // t in [0,1) representing position within a cardiac cycle
+    const systolic = Math.exp(-Math.pow((t-0.14)/0.045,2)) * 1.0;
+    const dicrotic = Math.exp(-Math.pow((t-0.42)/0.09,2)) * 0.32;
+    const baseline = 0.05*Math.sin(t*Math.PI*2*0.3);
+    return systolic + dicrotic + baseline;
+  }
+
+  let points = [];
+  const cycleLen = 200; // px per beat approx, recalced on draw
+  let scrollX = 0;
+  const speed = 1.6;
+  const beatDuration = 220; // "px" width of one beat pattern
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // grid
+    ctx.strokeStyle = 'rgba(92,255,177,0.06)';
+    ctx.lineWidth = 1;
+    for(let x=0;x<W;x+=28){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for(let y=0;y<H;y+=28){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    scrollX += speed;
+
+    ctx.beginPath();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#5CFFB1';
+    ctx.shadowColor = '#5CFFB1';
+    ctx.shadowBlur = 8;
+
+    const baseY = H*0.72;
+    const amp = H*0.55;
+
+    for(let x=0; x<=W; x++){
+      const globalX = x + scrollX;
+      const t = (globalX % beatDuration) / beatDuration;
+      const v = ppgSample(t);
+      const y = baseY - v*amp;
+      if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // sweep highlight line
+    const sweepX = W - (scrollX % W);
+    const grad = ctx.createLinearGradient(sweepX-40,0,sweepX,0);
+    grad.addColorStop(0,'rgba(92,255,177,0)');
+    grad.addColorStop(1,'rgba(92,255,177,0.25)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(sweepX-40,0,40,H);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // subtle BPM jitter for realism
+  const bpmEl = document.getElementById('bpm');
+  setInterval(()=>{
+    const bpm = 70 + Math.round(Math.random()*6-3);
+    bpmEl.textContent = bpm + ' BPM';
+  },2400);
+</script>
+
+</body>
+</html>
